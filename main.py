@@ -25,6 +25,7 @@ class flip_game:
         self.revealed = set()
         self.current_player = 1
         self.score = {1: 0, 2: 0}
+        self.game_over = False
 
         # UI
         self.score_label = tk.Label(
@@ -38,6 +39,7 @@ class flip_game:
         return f"Player 1: {self.score[1]}   Player 2: {self.score[2]}   |   Turn: Player {self.current_player}"
 
     def create_board(self):
+        global board_btn
         for row in range(self.rows):
             for column in range(self.cols):
                 board_btn = tk.Button(
@@ -56,6 +58,16 @@ class flip_game:
                     column=column,
                 )
                 self.button[(row,column)] = board_btn
+
+        restart = tk.Button(
+            self.root,
+            text="RESART",
+            background="white",
+            foreground=self.color_gray,
+            font=("Consolas", 20),
+            command=self.new_game
+        )
+        restart.grid(row=self.rows+2,column=0,columnspan=self.cols,sticky="we")
 
 
 
@@ -103,16 +115,23 @@ class flip_game:
 
     def end_game(self):
         if self.score[1] > self.score[2]:
-            winner = "Player 1"
+            winner = "Player 1 WIN"
         elif self.score[1] < self.score[2]:
-            winner = "Player 2"
+            winner = "Player 2 WIN"
         else:
             winner = "Its a tie!"
+
+        self.game_over = True
+        self.score_label.config(text=F'{winner}', foreground=self.color_blue )
+        return
         
-        messagebox.showinfo("Game Over", f"Final Score:\n"
-                                         f"Player 1: {self.score[1]}\n"
-                                         f"Player 2: {self.score[2]}\n\nWinner: {winner}")
-        self.root.quit()
+
+    def new_game(self):
+        for widget in root.winfo_children(): #will destroy all of the window and start  from the beginning
+            widget.destroy()
+        flip_game(root)
+
+
 
         
 
